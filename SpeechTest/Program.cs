@@ -5,12 +5,64 @@ using System.Speech.Synthesis;
 namespace SampleSynthesis;
 
 [SupportedOSPlatform("windows")]
-class Program
+public class Program
 {
+    private static string VoiceBR = "Microsoft Maria Desktop";
+    private static string VoiceEN = "Microsoft Zira Desktop";
+
     static void Main(string[] args)
     {
         Console.Title = "Microsoft System.Speech Test";
 
+        StartPresentation();
+        ShowMenu();
+
+        // https://www.nuget.org/packages/System.Speech/7.0.0-rc.1.22426.10
+        // https://learn.microsoft.com/pt-br/dotnet/api/system.speech.recognition.recognizedaudio?view=netframework-4.8
+        // https://learn.microsoft.com/pt-br/dotnet/api/system.speech.synthesis.speechsynthesizer.speak?view=netframework-4.8#system-speech-synthesis-speechsynthesizer-speak(system-string)
+    }
+
+    static void StartPresentation()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.Write("BR or EN presentation?[1/2]: ");
+            string? optionPresentation = Console.ReadLine();
+            Console.Clear();
+
+            if (optionPresentation == "1")
+            {
+                string textMessage = "Olá! Bem vindo ao aplicativo de teste de fala. Em seguida, vamos iniciar o sistema com o menu contendo algumas opções de teste, selecione uma opção para testar a aplicação.";
+                Console.WriteLine(textMessage);
+                Presentation(VoiceBR, textMessage);
+                break;
+            }
+            else if (optionPresentation == "2")
+            {
+                string textMessage = "Hello! Welcome to the speech testing app. Next, we'll launch the system with a menu containing some testing options. Select an option to test the application.";
+                Console.WriteLine(textMessage);
+                Presentation(VoiceEN, textMessage);
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid option. Press any button and try again.");
+                Console.ReadKey();
+            }
+        }
+    }
+
+    static void Presentation(string voiceType, string textMessage)
+    {
+        SpeechSynthesizer synth = new SpeechSynthesizer();
+        synth.SelectVoice(voiceType);
+        synth.SetOutputToDefaultAudioDevice();
+        synth.Speak(textMessage);
+    }
+
+    static void ShowMenu()
+    {
         while (true)
         {
             Console.Clear();
@@ -18,7 +70,7 @@ class Program
             Console.WriteLine("1 - Brazilian voice salutation");
             Console.WriteLine("2 - American voice salutation");
             Console.WriteLine("3 - Get installed Windows voices");
-            Console.WriteLine("4 - Check installed recognize.");
+            Console.WriteLine("4 - Check installed recognize");
             Console.WriteLine("5 - Speach a command");
             Console.WriteLine("0 - Exit\n");
             Console.Write("Option: ");
@@ -27,35 +79,31 @@ class Program
 
             if (string.IsNullOrEmpty(option))
             {
+                Console.WriteLine("Invalid option. Please try again.");
                 continue;
             }
-            else if (option == "1")
+
+            if (option == "1")
             {
                 SalutationVoiceBR();
-                continue;
             }
             else if (option == "2")
             {
                 SalutationVoiceEN();
-                continue;
             }
             else if (option == "3")
             {
                 CheckInstalledVoices();
-                continue;
             }
             else if (option == "4")
             {
                 foreach (RecognizerInfo ri in SpeechRecognitionEngine.InstalledRecognizers())
                     System.Diagnostics.Debug.WriteLine(ri.Culture.Name);
                 Console.ReadKey();
-
-                continue;
             }
             else if (option == "5")
             {
                 ListeningHumanVoice();
-                continue;
             }
             else if (option == "0")
             {
@@ -63,10 +111,6 @@ class Program
                 Environment.Exit(0);
             }
         }
-
-        // https://www.nuget.org/packages/System.Speech/7.0.0-rc.1.22426.10
-        // https://learn.microsoft.com/pt-br/dotnet/api/system.speech.recognition.recognizedaudio?view=netframework-4.8
-        // https://learn.microsoft.com/pt-br/dotnet/api/system.speech.synthesis.speechsynthesizer.speak?view=netframework-4.8#system-speech-synthesis-speechsynthesizer-speak(system-string)
     }
 
     static void SalutationVoiceBR()
@@ -77,15 +121,12 @@ class Program
         SpeechSynthesizer synth = new SpeechSynthesizer();
 
         synth.SelectVoice("Microsoft Maria Desktop");
-
+        
         //synth.SelectVoice("male");
         //synth.SelectVoiceByHints(VoiceGender.Male);
 
         // Configure the audio output.   
         synth.SetOutputToDefaultAudioDevice();
-
-        // Speak a string.
-        //synth.Speak("What do you want?");
 
         string salutation = string.Empty;
 
@@ -96,7 +137,7 @@ class Program
         else if (now.Hour >= 13 && now.Hour <= 18)
             salutation = "Boa tarde";
         else
-            salutation = "Boa noite.";
+            salutation = "Boa noite";
 
         string message = $"{salutation}! Agora são {DateTime.Now.ToString("HH:mm")} do dia {DateTime.Now.ToString("dd/MM/yyyy")}";
 
@@ -121,9 +162,6 @@ class Program
         // Configure the audio output.   
         synth.SetOutputToDefaultAudioDevice();
 
-        // Speak a string.
-        //synth.Speak("What do you want?");
-
         string salutation = string.Empty;
 
         DateTime now = DateTime.Now;
@@ -133,7 +171,7 @@ class Program
         else if (now.Hour >= 13 && now.Hour <= 18)
             salutation = "Good afternoon";
         else
-            salutation = "Good night.";
+            salutation = "Good night";
 
         string message = $"{salutation}! Now is {DateTime.Now.ToString("HH:mm")} from day {DateTime.Now.ToString("yyyy-MM-dd")}";
 
