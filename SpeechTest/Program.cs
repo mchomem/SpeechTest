@@ -100,9 +100,14 @@ public class Program
             }
             else if (option == "4")
             {
+                var recognizerInfoBR = SpeechRecognitionEngine.InstalledRecognizers().FirstOrDefault(r => r.Culture.Name == "pt-BR");
+                var recognizerInfoUS = SpeechRecognitionEngine.InstalledRecognizers().FirstOrDefault(r => r.Culture.Name == "en-US");
+
+                Console.WriteLine($"Recognizer culture pt-BR: {(recognizerInfoBR != null ? "installed": "not installed")}");
+                Console.WriteLine($"Recognizer culture en-US: {(recognizerInfoUS != null ? "installed": "not installed")}");
+
                 foreach (RecognizerInfo ri in SpeechRecognitionEngine.InstalledRecognizers())
                     Console.WriteLine($"Recognizer: {ri.Name}, Culture: {ri.Culture}");
-                //System.Diagnostics.Debug.WriteLine(ri.Culture.Name);
 
                 Console.ReadKey();
             }
