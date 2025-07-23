@@ -1,6 +1,8 @@
-﻿using System.Runtime.Versioning;
+﻿using NAudio.Wave;
+using System.Runtime.Versioning;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
+using Vosk;
 
 namespace SampleSynthesis;
 
@@ -83,7 +85,6 @@ public class Program
             if (string.IsNullOrEmpty(option))
             {
                 Console.WriteLine("Invalid option. Please try again.");
-                continue;
             }
 
             if (option == "1")
@@ -100,20 +101,11 @@ public class Program
             }
             else if (option == "4")
             {
-                var recognizerInfoBR = SpeechRecognitionEngine.InstalledRecognizers().FirstOrDefault(r => r.Culture.Name == "pt-BR");
-                var recognizerInfoUS = SpeechRecognitionEngine.InstalledRecognizers().FirstOrDefault(r => r.Culture.Name == "en-US");
-
-                Console.WriteLine($"Recognizer culture pt-BR: {(recognizerInfoBR != null ? "installed": "not installed")}");
-                Console.WriteLine($"Recognizer culture en-US: {(recognizerInfoUS != null ? "installed": "not installed")}");
-
-                foreach (RecognizerInfo ri in SpeechRecognitionEngine.InstalledRecognizers())
-                    Console.WriteLine($"Recognizer: {ri.Name}, Culture: {ri.Culture}");
-
-                Console.ReadKey();
+                CheckInstalledRecognizers();
             }
             else if (option == "5")
             {
-                ListeningHumanVoice();
+                ListeningHumanVoiceVosks();
             }
             else if (option == "6")
             {
@@ -122,7 +114,7 @@ public class Program
             else if (option == "0")
             {
                 SetBreakMessage("Press any key to exit.");
-                Environment.Exit(0);
+                break;
             }
         }
     }
@@ -195,6 +187,35 @@ public class Program
         SetBreakMessage("\nPress any key to continue.");
     }
 
+    static void ListeningHumanVoiceVosks()
+    {
+        Vosk.Vosk.SetLogLevel(0); // Silencia logs
+        var model = new Model("model"); // pasta com o modelo pt-BR
+
+        using var recognizer = new VoskRecognizer(model, 16000.0f);
+        using var waveIn = new WaveInEvent();
+
+        waveIn.DeviceNumber = 0;
+        waveIn.WaveFormat = new WaveFormat(16000, 1);
+        waveIn.DataAvailable += (s, a) =>
+        {
+            if (recognizer.AcceptWaveform(a.Buffer, a.BytesRecorded))
+            {
+                Console.WriteLine(recognizer.Result());
+            }
+            else
+            {
+                Console.WriteLine(recognizer.PartialResult());
+            }
+        };
+
+        Console.WriteLine("Fale algo (pt-BR):");
+        waveIn.StartRecording();
+        Console.ReadLine();
+        waveIn.StopRecording();
+    }
+
+    [Obsolete("Don't work in Windows 11")]
     static void ListeningHumanVoice()
     {
         // https://learn.microsoft.com/pt-br/dotnet/api/system.speech.recognition.speechrecognitionengine?view=dotnet-plat-ext-8.0
@@ -229,10 +250,26 @@ public class Program
         Console.ReadLine();
     }
 
+    [Obsolete("Don't work in Windows 11")]
     private static void Recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
     {
         // Este método é chamado quando uma palavra é reconhecida
         Console.WriteLine($"Palavra reconhecida: {e.Result.Text}");
+    }
+
+    [Obsolete("Don't work in Windows 11")]
+    static void CheckInstalledRecognizers()
+    {
+        var recognizerInfoBR = SpeechRecognitionEngine.InstalledRecognizers().FirstOrDefault(r => r.Culture.Name == "pt-BR");
+        var recognizerInfoUS = SpeechRecognitionEngine.InstalledRecognizers().FirstOrDefault(r => r.Culture.Name == "en-US");
+
+        Console.WriteLine($"Recognizer culture pt-BR: {(recognizerInfoBR != null ? "installed" : "not installed")}");
+        Console.WriteLine($"Recognizer culture en-US: {(recognizerInfoUS != null ? "installed" : "not installed")}");
+
+        foreach (RecognizerInfo ri in SpeechRecognitionEngine.InstalledRecognizers())
+            Console.WriteLine($"Recognizer: {ri.Name}, Culture: {ri.Culture}");
+
+        Console.ReadKey();
     }
 
     static void CheckInstalledVoices()
