@@ -27,7 +27,7 @@ public class Program
         while (true)
         {
             Console.Clear();
-            Console.Write("BR or EN presentation?[1/2]: ");
+            Console.Write("BR or EN presentation?[1, 2 ou 3 para pular]: ");
             string? optionPresentation = Console.ReadLine();
             Console.Clear();
 
@@ -45,6 +45,8 @@ public class Program
                 Presentation(VoiceEN, textMessage);
                 break;
             }
+            else if (optionPresentation == "3")
+                break;
             else
             {
                 Console.WriteLine("Invalid option. Press any button and try again.");
@@ -72,6 +74,7 @@ public class Program
             Console.WriteLine("3 - Get installed Windows voices");
             Console.WriteLine("4 - Check installed recognize");
             Console.WriteLine("5 - Speach a command");
+            Console.WriteLine("6 - Relaunch presentation");
             Console.WriteLine("0 - Exit\n");
             Console.Write("Option: ");
 
@@ -98,12 +101,18 @@ public class Program
             else if (option == "4")
             {
                 foreach (RecognizerInfo ri in SpeechRecognitionEngine.InstalledRecognizers())
-                    System.Diagnostics.Debug.WriteLine(ri.Culture.Name);
+                    Console.WriteLine($"Recognizer: {ri.Name}, Culture: {ri.Culture}");
+                //System.Diagnostics.Debug.WriteLine(ri.Culture.Name);
+
                 Console.ReadKey();
             }
             else if (option == "5")
             {
                 ListeningHumanVoice();
+            }
+            else if (option == "6")
+            {
+                StartPresentation();
             }
             else if (option == "0")
             {
@@ -234,9 +243,9 @@ public class Program
         SetBreakMessage("\nPress any key to continue.");
     }
 
-    static void SetBreakMessage(string message)
+    static void SetBreakMessage(string message = "Press any key to continue.")
     {
-        Console.WriteLine("Press any key to continue.");
+        Console.WriteLine(message);
         Console.ReadKey();
     }
 }
