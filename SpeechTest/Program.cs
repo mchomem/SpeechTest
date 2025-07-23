@@ -190,7 +190,7 @@ public class Program
     static void ListeningHumanVoiceVosks()
     {
         Vosk.Vosk.SetLogLevel(0); // Silencia logs
-        var model = new Model("model"); // pasta com o modelo pt-BR
+        var model = new Model("model-small-brazilian"); // pasta com o modelo pt-BR
 
         using var recognizer = new VoskRecognizer(model, 16000.0f);
         using var waveIn = new WaveInEvent();
