@@ -68,6 +68,7 @@ public class Program
             Console.WriteLine("3 - Get installed Windows voices");
             Console.WriteLine("4 - Speach a command");
             Console.WriteLine("5 - Relaunch presentation");
+            Console.WriteLine("6 - Speak custom text");
             Console.WriteLine("0 - Exit\n");
             Console.Write("Option: ");
 
@@ -98,12 +99,30 @@ public class Program
             {
                 StartPresentation();
             }
+            else if (option == "6")
+            {
+                SpeakCustomText();
+            }
             else if (option == "0")
             {
                 SetBreakMessage("Press any key to exit.");
                 break;
             }
         }
+    }
+
+    static void SpeakCustomText()
+    {
+        Console.Write("Type a text: ");
+        var text = Console.ReadLine();
+
+        if (string.IsNullOrEmpty(text))
+        {
+            Console.WriteLine("Invalid text. Please try again.");
+            return;
+        }
+
+        Speak(TypeVoice.VoiceMaria, text);
     }
 
     static void SalutationVoiceBR()
