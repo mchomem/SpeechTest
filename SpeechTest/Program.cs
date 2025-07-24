@@ -1,6 +1,6 @@
 ﻿using NAudio.Wave;
 using System.Runtime.Versioning;
-using System.Speech.Recognition;
+//using System.Speech.Recognition;
 using System.Speech.Synthesis;
 using Vosk;
 
@@ -35,7 +35,7 @@ public class Program
 
             if (optionPresentation == "1")
             {
-                string textMessage = "Olá! Bem vindo ao aplicativo de teste de fala. Em seguida, vamos iniciar o sistema com o menu contendo algumas opções de teste, selecione uma opção para testar a aplicação.";
+                string textMessage = "Olá! Bem vindo ao aplicativo de teste de fala. Em seguida, vamos iniciar o sistema com o menu contendo algumas opções de teste. Selecione uma opção para testar a aplicação.";
                 Console.WriteLine(textMessage);
                 Presentation(VoiceBR, textMessage);
                 break;
